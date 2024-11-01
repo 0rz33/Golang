@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  go:
+    build: ./docker/go
+    volumes:
+      - ./app:/app:rw
+    ports:
+      - "8083:8083"
+    depends_on:
+      - mysql
+    networks:
+      - go
+    tty: true
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=qweqwe
+      - MYSQL_DATABASE=qwe
+      - MYSQL_USER=qwe
+      - MYSQL_PASSWORD=qweqwe
+    volumes:
+      - ./docker/mysql-data:/var/lib/mysql
+      - ./docker/log/mysql/:/var/log/mysql/:rw
+    command: --console
+    ports:
+      - "3306:3306"
+    networks:
+      - go
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - go
+
+networks:
+  go:
+    driver: bridge
